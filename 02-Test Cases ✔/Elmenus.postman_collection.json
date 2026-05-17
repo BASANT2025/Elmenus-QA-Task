@@ -1,0 +1,174 @@
+{
+  "info": {
+    "_postman_id": "7c5b351f-d0b4-49bc-9992-6a3f6369b3a3",
+    "name": "Elmenus",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52870788"
+  },
+  "item": [
+    {
+      "name": "Homepage feed",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Sign In",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "})",
+              "",
+              "pm.test('Response time is less than 3000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+              "})",
+              "",
+              "pm.test('Order is created with an ID', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('order');",
+              "    pm.expect(jsonData.order).to.have.property('id');",
+              "})",
+              "",
+              "pm.test('Order status is pending or confirmed', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect([",
+              "        'pending',",
+              "        'confirmed'",
+              "    ]).to.include(jsonData.order.status);",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"restaurant_id\": \"{{restaurantId}}\",\n  \"items\": [\n    {\n      \"item_id\": \"{{itemId}}\",\n      \"quantity\": 1\n    }\n  ],\n  \"delivery_address\": {\n    \"lat\": 30.0444,\n    \"lng\": 31.2357,\n    \"address\": \"Cairo, Egypt\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.elmenus.com/api/v2/orders",
+          "protocol": "https",
+          "host": [
+            "api",
+            "elmenus",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v2",
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Restaurants",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response time is less than 2000ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "})",
+              "",
+              "pm.test('Response has restaurants array', function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('restaurants');",
+              "    pm.expect(jsonData.restaurants).to.be.an('array');",
+              "})",
+              "",
+              "pm.test('Each restaurant has required fields', function () {",
+              "    const jsonData = pm.response.json();",
+              "    jsonData.restaurants.forEach(function (restaurant) {",
+              "        pm.expect(restaurant).to.have.property('id');",
+              "        pm.expect(restaurant).to.have.property('name');",
+              "    });",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://api.elmenus.com/api/v2/restaurants?q=pizza&lat=30.0444&lng=31.2357",
+          "protocol": "https",
+          "host": [
+            "api",
+            "elmenus",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v2",
+            "restaurants"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "pizza",
+              "description": "search keyword"
+            },
+            {
+              "key": "lat",
+              "value": "30.0444",
+              "description": "latitude"
+            },
+            {
+              "key": "lng",
+              "value": "31.2357",
+              "description": "longitude"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    }
+  ]
+}
